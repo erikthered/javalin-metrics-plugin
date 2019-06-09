@@ -16,6 +16,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.javalin:javalin:2.8.0")
     implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("commons-io:commons-io:2.6")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
