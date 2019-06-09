@@ -10,8 +10,9 @@ class App {
         }
 }
 
-fun main(args: Array<String>) {
-    val app = Javalin.create().start(7000)
-    app.register(MetricsPlugin())
-    app.get("/") { ctx -> ctx.result(App().greeting) }
+fun main() {
+    Javalin.create()
+            .register(MetricsPlugin())
+            .get("/") { ctx -> ctx.result(App().greeting) }
+            .start(7000)
 }
