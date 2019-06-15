@@ -1,20 +1,21 @@
 package com.github.erikthered.javalin.plugin;
 
+import static io.javalin.rendering.template.TemplateUtil.model;
+
 import io.javalin.Extension;
 import io.javalin.Javalin;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.IntSummaryStatistics;
+import java.util.LongSummaryStatistics;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MetricsPlugin implements Extension {
 
-  Logger logger = LoggerFactory.getLogger("metrics");
+  private static final Logger logger = LoggerFactory.getLogger("metrics");
 
   @Override
   public void registerOnJavalin(Javalin app) {
@@ -44,19 +45,17 @@ public class MetricsPlugin implements Extension {
       MetricsRegistry.STATS.add(new RequestStatistic(requestId, durationMs, length));
     });
 
+    // Register page for displaying metrics info
     app.get("/metrics", ctx -> {
       Collection<RequestStatistic> stats = MetricsRegistry.STATS;
-      List<Long> avgTimes = stats.stream().map(RequestStatistic::getDuration)
-          .collect(Collectors.toList());
-      Optional<Long> avgTime = avgTimes.stream().reduce(Long::sum)
-          .map(sum -> sum / avgTimes.size());
-      List<Integer> avgSizes = stats.stream().map(RequestStatistic::getSizeInBytes)
-          .collect(Collectors.toList());
-      Optional<Integer> avgSize = avgSizes.stream().reduce(Integer::sum)
-          .map(sum -> sum / avgSizes.size());
-      ctx.result(String
-          .format("Number of requests: %s, Avg time: %s ms, Avg response size: %s bytes", stats.size(),
-              avgTime.orElse(0L), avgSize.orElse(0)));
+      LongSummaryStatistics times = stats.stream()
+          .mapToLong(RequestStatistic::getDuration).summaryStatistics();
+      IntSummaryStatistics sizes = stats.stream().mapToInt(RequestStatistic::getSizeInBytes)
+          .summaryStatistics();
+      ctx.render("metrics.html",
+          model("requestTimes", times,
+              "responseSizes", sizes)
+      );
     });
   }
 }
