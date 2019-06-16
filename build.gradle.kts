@@ -20,7 +20,7 @@ dependencies {
     implementation("org.thymeleaf:thymeleaf:3.0.9.RELEASE")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-    testImplementation("org.assertj:assertj-core:3.11.1")
+    testImplementation("org.assertj:assertj-core:3.12.2")
 }
 
 application {
