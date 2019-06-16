@@ -12,8 +12,10 @@ Currently the following metrics are being recorded:
 A unique request ID is also generated for each request, which is set in the `Request-Id` header of
 the HTTP response.
 
-The plugin also registers the route `/metrics` to a simple Thymeleaf page for viewing the aggregated 
-metrics.
+The plugin also registers several routes related to metrics:
+- `/metrics` displays a simple Thymeleaf page for viewing the aggregated metrics.
+- `/metrics/:request-id` will return the duration and sizeInBytes for an individual request in json
+format
 
 ## Usage
 

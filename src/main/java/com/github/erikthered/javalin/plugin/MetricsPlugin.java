@@ -79,5 +79,14 @@ public class MetricsPlugin implements Extension {
               "responseSizes", sizes)
       );
     });
+
+    app.get("/metrics/:request-id", ctx -> {
+      String requestId = ctx.pathParam("request-id");
+      if (stats.containsKey(requestId)) {
+        ctx.json(stats.get(requestId));
+      } else {
+        ctx.status(404);
+      }
+    });
   }
 }

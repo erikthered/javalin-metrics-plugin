@@ -18,6 +18,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("commons-io:commons-io:2.6")
     implementation("org.thymeleaf:thymeleaf:3.0.9.RELEASE")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.9.8")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("org.assertj:assertj-core:3.12.2")
