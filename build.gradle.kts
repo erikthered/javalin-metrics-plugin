@@ -25,5 +25,5 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = "com.github.erikthered.javalin.AppKt"
+    mainClassName = "com.github.erikthered.javalin.example.ExampleAppKt"
 }
