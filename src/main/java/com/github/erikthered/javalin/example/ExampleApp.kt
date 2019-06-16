@@ -5,7 +5,7 @@ import io.javalin.Javalin
 
 fun main() {
     Javalin.create()
-            .register(MetricsPlugin())
+            .register(MetricsPlugin.getInstance())
             .get("/hello") { ctx ->
                 ctx.result("Hello world")
             }

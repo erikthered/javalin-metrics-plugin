@@ -18,7 +18,7 @@ public class MetricsPluginTest {
   public void setup() throws Exception {
     javalin = Javalin.create()
         .disableStartupBanner()
-        .register(new MetricsPlugin())
+        .register(MetricsPlugin.getInstance())
         .get("/test/1", ctx -> {
           Thread.sleep(100);
           ctx.result("Test response 1");
@@ -31,7 +31,8 @@ public class MetricsPluginTest {
   }
 
   @After
-  public void teardown() throws Exception{
+  public void teardown() throws Exception {
+    MetricsPlugin.stats().clear();
     client.stop();
     javalin.stop();
   }
@@ -41,7 +42,7 @@ public class MetricsPluginTest {
     client.GET("http://localhost:7777/test/1").getStatus();
     client.GET("http://localhost:7777/test/2").getStatus();
     client.GET("http://localhost:7777/test/3").getStatus();
-    assertThat(MetricsRegistry.STATS.size()).isEqualTo(3);
+    assertThat(MetricsPlugin.stats().size()).isEqualTo(3);
   }
 
   @Test
@@ -55,7 +56,7 @@ public class MetricsPluginTest {
   public void testRequestStatsAreNonZero() throws Exception {
     HttpFields headers = client.GET("http://localhost:7777/test/1").getHeaders();
     String requestId = headers.get("Request-Id");
-    assertThat(MetricsRegistry.STATS.get(requestId).getDuration()).isPositive();
-    assertThat(MetricsRegistry.STATS.get(requestId).getSizeInBytes()).isPositive();
+    assertThat(MetricsPlugin.stats().get(requestId).getDuration()).isPositive();
+    assertThat(MetricsPlugin.stats().get(requestId).getSizeInBytes()).isPositive();
   }
 }

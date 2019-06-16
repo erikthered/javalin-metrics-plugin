@@ -9,6 +9,7 @@ import java.util.IntSummaryStatistics;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,24 @@ import org.slf4j.LoggerFactory;
 public class MetricsPlugin implements Extension {
 
   private static final Logger logger = LoggerFactory.getLogger("metrics");
+
+  private final Map<String, RequestStatistic> stats;
+
+  private static MetricsPlugin instance;
+
+  private MetricsPlugin() {
+    this.stats = new ConcurrentHashMap<>();
+  }
+
+  public static MetricsPlugin getInstance() {
+    return (instance == null)
+        ? instance = new MetricsPlugin()
+        : instance;
+  }
+
+  protected static Map<String, RequestStatistic> stats() {
+    return instance.stats;
+  }
 
   @Override
   public void registerOnJavalin(Javalin app) {
@@ -42,12 +61,11 @@ public class MetricsPlugin implements Extension {
               durationMs, length);
 
       // Record stat values
-      MetricsRegistry.STATS.put(requestId, new RequestStatistic(durationMs, length));
+      stats.put(requestId, new RequestStatistic(durationMs, length));
     });
 
     // Register page for displaying metrics info
     app.get("/metrics", ctx -> {
-      Map<String, RequestStatistic> stats = MetricsRegistry.STATS;
       LongSummaryStatistics times = stats.values().stream()
           .mapToLong(RequestStatistic::getDuration).summaryStatistics();
       IntSummaryStatistics sizes = stats.values().stream()
