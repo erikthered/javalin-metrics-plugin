@@ -45,9 +45,12 @@ public class MetricsPlugin implements Extension {
     }).after(ctx -> {
       // Calculate request body size
       InputStream responseBody = ctx.resultStream();
-      responseBody.mark(0);
-      int length = IOUtils.toByteArray(responseBody).length;
-      responseBody.reset();
+      int length = 0;
+      if(responseBody != null) {
+        responseBody.mark(0);
+        length = IOUtils.toByteArray(responseBody).length;
+        responseBody.reset();
+      }
 
       // Add a unique id per request
       String requestId = UUID.randomUUID().toString();
