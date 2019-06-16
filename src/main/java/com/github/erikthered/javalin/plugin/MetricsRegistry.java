@@ -1,8 +1,10 @@
 package com.github.erikthered.javalin.plugin;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MetricsRegistry {
-    public static final Collection<RequestStatistic> STATS = new ArrayList<>();
+
+  public static final Map<String, RequestStatistic> STATS = new ConcurrentHashMap<>();
+
 }

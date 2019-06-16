@@ -5,9 +5,9 @@ import static io.javalin.rendering.template.TemplateUtil.model;
 import io.javalin.Extension;
 import io.javalin.Javalin;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.IntSummaryStatistics;
 import java.util.LongSummaryStatistics;
+import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -42,15 +42,16 @@ public class MetricsPlugin implements Extension {
               durationMs, length);
 
       // Record stat values
-      MetricsRegistry.STATS.add(new RequestStatistic(requestId, durationMs, length));
+      MetricsRegistry.STATS.put(requestId, new RequestStatistic(durationMs, length));
     });
 
     // Register page for displaying metrics info
     app.get("/metrics", ctx -> {
-      Collection<RequestStatistic> stats = MetricsRegistry.STATS;
-      LongSummaryStatistics times = stats.stream()
+      Map<String, RequestStatistic> stats = MetricsRegistry.STATS;
+      LongSummaryStatistics times = stats.values().stream()
           .mapToLong(RequestStatistic::getDuration).summaryStatistics();
-      IntSummaryStatistics sizes = stats.stream().mapToInt(RequestStatistic::getSizeInBytes)
+      IntSummaryStatistics sizes = stats.values().stream()
+          .mapToInt(RequestStatistic::getSizeInBytes)
           .summaryStatistics();
       ctx.render("metrics.html",
           model("requestTimes", times,
