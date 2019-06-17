@@ -74,7 +74,7 @@ public class MetricsPlugin implements Extension {
       IntSummaryStatistics sizes = stats.values().stream()
           .mapToInt(RequestStatistic::getSizeInBytes)
           .summaryStatistics();
-      ctx.render("metrics.html",
+      ctx.render("public/metrics.html",
           model("requestTimes", times,
               "responseSizes", sizes)
       );

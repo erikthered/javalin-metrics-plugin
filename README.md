@@ -14,9 +14,9 @@ the HTTP response.
 
 The plugin also registers several routes related to metrics:
 - `/metrics` displays a simple Thymeleaf page for viewing aggregated metrics (min, max and avg 
-values for time and size)
+values for time and size). There is also a form for viewing stats for a single request ID.
 - `/metrics/:request-id` will return the duration and sizeInBytes for an individual request in json
-format
+format. This is used by the form on the `/metrics` page.
 
 ## Usage
 

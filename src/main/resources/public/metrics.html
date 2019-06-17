@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Application Request Metrics</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div th:if="${requestTimes.getCount()}">
+  <h4>Request Times:</h4>
+  <ul>
+    <li>Average: <span th:text="${requestTimes.getAverage()}"></span></li>
+    <li>Minimum: <span th:text="${requestTimes.getMin()}"></span></li>
+    <li>Maximum: <span th:text="${requestTimes.getMax()}"></span></li>
+  </ul>
+  <h4>Response Body Sizes:</h4>
+  <ul>
+    <li>Average: <span th:text="${responseSizes.getAverage()}"></span></li>
+    <li>Minimum: <span th:text="${responseSizes.getMin()}"></span></li>
+    <li>Maximum: <span th:text="${responseSizes.getMax()}"></span></li>
+  </ul>
+</div>
+<p th:unless="${requestTimes.getCount()}">No requests yet, make a request to see statistics</p>
+<div th:if="${requestTimes.getCount()}">
+  <p>View details of single request:</p>
+  <form id="form">
+    <label>Request ID:</label>
+    <input type="text" name="requestId"/>
+    <button type="submit">View</button>
+  </form>
+  <p id="requestDetails"></p>
+</div>
+</body>
+</html>
+<script type="application/javascript">
+  const form = document.getElementById('form');
+
+  function getRequestDetails(event) {
+    const reqId = form.elements.requestId.value;
+    const details = document.getElementById('requestDetails');
+    axios.get('/metrics/' + reqId)
+    .then(function (response) {
+      if (response.data.duration == null) {
+        details.innerText = "Oops, something went wrong.";
+      } else {
+        details.innerText = "Request ID: " + reqId + ", "
+            + "Duration: " + response.data.duration + "ms, "
+            + "Response size: " + response.data.sizeInBytes + " bytes";
+      }
+    })
+    .catch(function (error) {
+      if (error.response && error.response.status === 404) {
+        details.innerText = "Unknown request id, please use a valid id.";
+      } else {
+        details.innerText = "Oops, something went wrong.";
+      }
+    });
+    event.preventDefault();
+  }
+
+  if (form != null) {
+    form.addEventListener('submit', getRequestDetails);
+  }
+</script>
